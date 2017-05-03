@@ -1,0 +1,42 @@
+<configuration>
+
+    <property name="LOG_HOME" value="." />
+    <property name="LOG_FILE" value="app1.log" />
+    <property name="EIDAS_VERSION" value="1.2" />
+    <property name="EIDAS_BUILD" value="2017-05-03T18:32:27" />
+
+    <appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_FILE}.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp />
+                <version />
+                <arguments />
+                <pattern>
+                    <pattern>
+                        {
+                            "eidas_version": "${EIDAS_VERSION}",
+                            "eidas_build": "${EIDAS_BUILD}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{"yyyy-mm-dd'T'HH:mm:ss.SSSZZZ"} [%thread] %level %logger{36} [v:${EIDAS_VERSION}, b:${EIDAS_BUILD}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="stdout" />
+        <appender-ref ref="logstash" />
+    </root>
+
+</configuration>
